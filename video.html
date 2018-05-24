@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="ISO-8859-1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsenui.css">
+	<link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsen-css-components.min.css">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
+	<link href="onsen-css-theme/theme.css" rel="stylesheet">
+	<script src="https://unpkg.com/onsenui/js/onsenui.min.js"></script>
+	<script src="js/function.js?86"></script>
+	<script src="js/instascan.min.js?23"></script>
+</head>
+<body>
+	<div id="video_container">
+		<video id='video-qrcode' style='transform: scaleX(1);'></video>
+		<script type="text/javascript">
+			var videoTag = document.getElementById('video-qrcode');
+			var scanner = new Instascan.Scanner({ video: videoTag });
+
+			scanner.addListener('scan', function (value) {
+				window.parent.postMessage(['varA', value], '*');
+			});
+
+			Instascan.Camera.getCameras()
+			.then(function (cameras) {
+
+				if (cameras.length > 0) {
+					var selectedCam = cameras[0];
+					$.each(cameras, (i, c) => {
+						if (c.name.indexOf('back') != -1) {
+							selectedCam = c;
+							return false;
+						}
+					});
+
+					scanner.start(selectedCam);
+				} else {
+					console.error('No cameras found.');
+				}
+			})
+			.catch(function(err) {
+				alert(err);
+			});
+
+		</script>
+	</div>
+</body>
+</html>
